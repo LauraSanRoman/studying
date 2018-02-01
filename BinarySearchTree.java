@@ -16,9 +16,11 @@
 
 public class BinarySearchTree {
     private Node root;
+    public BinarySearchTree(){
+      root = null;
+    }
     public BinarySearchTree(int arr[]){
-      root = new Node(arr[0]);
-      Node n = this.root;
+      root = new Node(arr[0],null);
       for (int i = 1;i < arr.length ; i++ ) {
         addItemToTree(arr[i],this.root);
       }
@@ -27,42 +29,64 @@ public class BinarySearchTree {
       private int value;
       private Node left;
       private Node right;
-      Node (int value) {
+      private Node parent;
+      Node (int value,Node parent) {
         this.value = value;
         left = null;
         right = null;
+        parent = parent;
       };
     }
-    public Node returnMin( Node root) {
-      // get minimum value ( furthest most left leaf)
-      Node returnNode = new Node(-1);
-      for (Node n = root;n != null ; n = n.left ) {
-        returnNode = n;
-      };
-      System.out.println(returnNode.value);
-      return returnNode;
+    public Node returnMin() {
+        Node minNode = this.root;
+        for (minNode = root;minNode.left != null ;minNode = minNode.left ) {
+        }
+        if(minNode.value == this.root.value){
+          this.root = remove(minNode.value, root);
+        }else{
+          remove(minNode.value, root);
+        }
+        System.out.println(minNode.value);
+        return minNode;
     };
+
+    private Node remove(int value, Node root){
+      if(root == null){
+        return null;
+      }
+      if(root.value < value){
+        root.right = remove(value,root.right);
+      }
+      if(root.value > value){
+        root.left = remove(value, root.left);
+      }
+      if(root.right != null){
+        return root.right;
+      }else{
+        return remove(value,root.right);
+      }
+    }
 
     private void addItemToTree(int value, Node n){
       if( value < n.value ){
         if(n.left == null){
-          n.left = new Node(value);
+          n.left = new Node(value,n);
         }else{
           addItemToTree(value,n.left);
         }
       } else{
         if(n.right == null){
-          n.right = new Node(value);
+          n.right = new Node(value,n);
         }else{
           addItemToTree(value,n.right);
         }
       }
     }
     public static void main(String[] args) {
-      int listOfValues[] = {8,3,10,1,6,4,7,14,13};
+      int listOfValues[] = {3,1,5,4,9,10,2,6,7,8};
       BinarySearchTree tree = new BinarySearchTree(listOfValues);
-      tree.returnMin(tree.root);
-      tree.returnMin(tree.root);
-
+      while(tree.root != null){
+        tree.returnMin();
+      }
     }
 }
